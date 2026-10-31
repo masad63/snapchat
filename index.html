@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>A very sweet request</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --night: #12263a; --night-2: #1d3b52;
+    --sugar: #fff8ea; --caramel: #b9772b; --ink: #2a1c0d;
+    --yes: #19b36b; --yes-dark: #0c7a47; --no: #ff6b4a; --no-dark: #b33a20;
+    --card: rgba(255, 248, 234, .96);
+    --grain:
+      radial-gradient(circle, rgba(255,255,255,.95) 1px, transparent 2px) 0 0 / 9px 9px,
+      radial-gradient(circle, rgba(201,154,82,.45) 1px, transparent 2px) 4px 5px / 11px 11px,
+      radial-gradient(circle, rgba(255,255,255,.85) 1.5px, transparent 2.5px) 2px 7px / 15px 15px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { min-height: 100%; }
+  body {
+    font-family: "DM Sans", system-ui, sans-serif; color: var(--ink);
+    background:
+      radial-gradient(900px 500px at 15% -10%, #2f6a8f55, transparent 60%),
+      radial-gradient(700px 500px at 100% 110%, #e6b96f33, transparent 60%),
+      linear-gradient(160deg, var(--night), var(--night-2));
+    background-attachment: fixed; overflow-x: hidden;
+    padding: max(20px, env(safe-area-inset-top)) 16px max(28px, env(safe-area-inset-bottom));
+    display: flex; justify-content: center;
+  }
+  .sparkle { position: fixed; width: 6px; height: 6px; background: #fff; opacity: 0; transform: rotate(45deg); border-radius: 1px; pointer-events: none; animation: twinkle 3.2s ease-in-out infinite; }
+  @keyframes twinkle { 0%,100% { opacity: 0; transform: rotate(45deg) scale(.4); } 50% { opacity: .9; transform: rotate(45deg) scale(1.2); } }
+
+  main { width: 100%; max-width: 560px; position: relative; z-index: 2; }
+  h1 { font-family: "Fredoka", sans-serif; font-weight: 700; color: var(--sugar); text-align: center; font-size: clamp(1.7rem, 7vw, 2.5rem); line-height: 1.1; text-shadow: 0 2px 0 #00000040, 0 8px 22px #00000050; margin: 8px 0 4px; }
+  .sub { text-align: center; color: #f0dfbd; margin-bottom: 4px; }
+
+  /* ================= STAGE ================= */
+  .stage { position: relative; height: 300px; display: flex; align-items: flex-end; justify-content: center; gap: 0; margin-top: 6px; }
+  .bubble {
+    position: absolute; top: 0; left: 50%; transform: translateX(-62%); width: max-content; max-width: 250px;
+    background: #fff; color: var(--ink); font-family: "Fredoka", sans-serif; font-weight: 500; font-size: .95rem; line-height: 1.25;
+    padding: 9px 13px; border-radius: 16px; box-shadow: 0 8px 18px #00000040; text-align: center; z-index: 3;
+  }
+  .bubble::after { content: ""; position: absolute; bottom: -9px; left: 60%; border: 10px solid transparent; border-top-color: #fff; border-bottom: 0; }
+  .bubble.swap { animation: bubblePop .45s cubic-bezier(.2,1.6,.4,1); }
+  @keyframes bubblePop { from { transform: translateX(-62%) scale(.6); opacity: 0; } to { transform: translateX(-62%) scale(1); opacity: 1; } }
+
+  .tilt { position: relative; width: 235px; height: 255px; perspective: 850px; flex: none; }
+  .tilt-inner { position: absolute; inset: 0; transform-style: preserve-3d; transition: transform .15s ease-out; }
+
+  .glow { position: absolute; left: 50%; top: 46%; width: 260px; height: 260px; margin: -130px 0 0 -130px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,214,120,.6), rgba(255,214,120,0) 68%); animation: glowPulse 3s ease-in-out infinite; }
+  @keyframes glowPulse { 0%,100% { transform: scale(.92); opacity: .75; } 50% { transform: scale(1.08); opacity: 1; } }
+  .ground { position: absolute; left: 50%; bottom: 6px; width: 170px; height: 26px; margin-left: -85px; border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(0,0,0,.55), transparent 70%); animation: groundPulse 2.6s ease-in-out infinite; }
+  @keyframes groundPulse { 0%,100% { transform: scale(1); opacity: .9; } 40% { transform: scale(.7); opacity: .5; } }
+
+  /* orbiting mini sugar crystals */
+  .orbit { position: absolute; left: 50%; top: 46%; width: 0; height: 0; transform-style: preserve-3d; animation: ringSpin 9s linear infinite; }
+  @keyframes ringSpin { from { transform: rotateX(-14deg) rotateY(0); } to { transform: rotateX(-14deg) rotateY(360deg); } }
+  .orb { position: absolute; left: -13px; top: -13px; width: 26px; height: 26px; transform-style: preserve-3d; transform: rotateY(var(--a)) translateZ(118px); }
+  .orb i {
+    display: block; width: 26px; height: 26px; border-radius: 7px; border: 1.5px solid #fff;
+    background: var(--grain), linear-gradient(135deg, #fffef8, #f1dfb8);
+    box-shadow: 0 0 14px rgba(255,220,140,.9), inset 0 0 8px rgba(201,154,82,.5);
+    animation: billboard 9s linear infinite;
+  }
+  .orb.sm i { width: 18px; height: 18px; margin: 4px; border-radius: 5px; }
+  @keyframes billboard {
+    from { transform: rotateX(14deg) rotateY(calc(var(--a) * -1)) rotateZ(0); }
+    to   { transform: rotateX(14deg) rotateY(calc(var(--a) * -1 - 360deg)) rotateZ(360deg); }
+  }
+
+  /* the character */
+  .char { position: absolute; left: 42px; top: 42px; width: 150px; height: 150px; transform-style: preserve-3d; transform-origin: 50% 100%; animation: hop 2.6s ease-in-out infinite; }
+  @keyframes hop {
+    0%, 100% { transform: scale(1.05, .95) translateY(0); }
+    12% { transform: scale(.96, 1.05) translateY(-4px); }
+    40% { transform: scale(.97, 1.04) translateY(-26px); }
+    62% { transform: scale(1, 1) translateY(0); }
+    70% { transform: scale(1.07, .93) translateY(0); }
+    82% { transform: scale(.99, 1.01) translateY(0); }
+  }
+  .cube { position: absolute; inset: 0; transform-style: preserve-3d; animation: sway 6.5s ease-in-out infinite; }
+  @keyframes sway { 0%,100% { transform: rotateX(-15deg) rotateY(-30deg); } 50% { transform: rotateX(-9deg) rotateY(30deg); } }
+
+  .face {
+    position: absolute; inset: 0; border-radius: 16px; overflow: hidden; backface-visibility: hidden;
+    background: var(--grain), linear-gradient(135deg, #fffef9 0%, #f6e8c8 55%, #ecd3a0 100%);
+    border: 2px solid rgba(255,255,255,.9);
+    box-shadow: inset 0 0 30px rgba(232,170,80,.55), inset 0 0 0 4px rgba(255,255,255,.35);
+  }
+  .face::before { content: ""; position: absolute; inset: 0; background: linear-gradient(125deg, rgba(255,255,255,.8) 0%, rgba(255,255,255,0) 36%, rgba(255,255,255,0) 64%, rgba(255,214,140,.4) 100%); pointer-events: none; }
+  .face::after { content: ""; position: absolute; inset: 0; background: rgba(60,30,0, var(--shade, 0)); pointer-events: none; }
+  .f-front  { transform: translateZ(75px); }
+  .f-back   { transform: rotateY(180deg) translateZ(75px); --shade: .25; }
+  .f-right  { transform: rotateY(90deg)  translateZ(75px); --shade: .14; }
+  .f-left   { transform: rotateY(-90deg) translateZ(75px); --shade: .2; }
+  .f-top    { transform: rotateX(90deg)  translateZ(75px); --shade: 0; }
+  .f-bottom { transform: rotateX(-90deg) translateZ(75px); --shade: .4; }
+  .f-front svg { position: absolute; inset: 0; z-index: 1; }
+
+  .hand { position: absolute; top: 84px; width: 24px; height: 24px; border-radius: 50%; background: #fff3d6; border: 3px solid #8a5a22; box-shadow: 0 4px 6px rgba(0,0,0,.3); }
+  .hand.l { left: -22px; transform-origin: 30px 20px; animation: wave 1.1s ease-in-out infinite; }
+  .hand.r { right: -22px; }
+  @keyframes wave { 0%,100% { transform: rotate(6deg) translateY(0); } 50% { transform: rotate(-30deg) translateY(-22px); } }
+  .foot { position: absolute; top: 140px; width: 40px; height: 20px; border-radius: 50%; background: radial-gradient(circle at 40% 30%, #b98343, #7a4c18); box-shadow: 0 3px 5px rgba(0,0,0,.4); }
+  .foot.l { left: 24px; } .foot.r { right: 24px; }
+
+  .eye { transform-box: fill-box; transform-origin: center; animation: blink 4.4s infinite; }
+  @keyframes blink { 0%, 94%, 100% { transform: scaleY(1); } 97% { transform: scaleY(.08); } }
+  .tear, .sad-only, .happy-only { display: none; }
+  .char.sad .sad-only, .char.happy .happy-only { display: block; }
+  .char.sad .tear { display: block; animation: tear .7s linear infinite; }
+  .char.sad .tear.t2 { animation-delay: .35s; }
+  @keyframes tear { from { transform: translateY(0); opacity: 1; } to { transform: translateY(46px); opacity: 0; } }
+  .char.sad .mouth-neutral, .char.happy .mouth-neutral, .char.sad .brows-neutral { display: none; }
+  .char.sad { animation: sob .22s linear infinite; }
+  @keyframes sob { 0%,100% { transform: translateX(0) rotate(0); } 25% { transform: translateX(-3px) rotate(-1.5deg); } 75% { transform: translateX(3px) rotate(1.5deg); } }
+  .char.happy { animation: party .8s ease-in-out infinite; }
+  @keyframes party { 0%,100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-34px) rotate(4deg) scale(.97, 1.05); } }
+  .char.happy .cube { animation-duration: 1.6s; }
+
+  .sack { width: 122px; height: 182px; flex: none; margin-left: -18px; filter: drop-shadow(0 12px 10px rgba(0,0,0,.4)); animation: sackWiggle 3.4s ease-in-out infinite; transform-origin: 50% 100%; position: relative; z-index: 1; }
+  @keyframes sackWiggle { 0%,100% { transform: rotate(-2deg); } 50% { transform: rotate(3deg); } }
+
+  /* ================= 3D EMOJI ================= */
+  .e3d { display: inline-block; transform-style: preserve-3d; filter: drop-shadow(1px 1px 0 rgba(0,0,0,.35)) drop-shadow(2px 2px 0 rgba(0,0,0,.28)) drop-shadow(3px 3px 0 rgba(0,0,0,.2)) drop-shadow(0 10px 8px rgba(0,0,0,.4)); }
+  .tumble { animation: tumble 3s ease-in-out infinite; }
+  @keyframes tumble { 0%,100% { transform: rotateY(-25deg) rotateX(8deg); } 50% { transform: rotateY(25deg) rotateX(-8deg) translateY(-4px); } }
+  .pop { animation: pop .6s cubic-bezier(.2,1.6,.4,1); }
+  @keyframes pop { 0% { transform: scale(.2) rotateY(180deg); } 100% { transform: scale(1) rotateY(0); } }
+
+  /* ================= CARD ================= */
+  .card { background: var(--card); border-radius: 26px; padding: 22px 20px 20px; margin-top: 14px; box-shadow: 0 2px 0 #fff inset, 0 22px 50px -12px #000000aa, 0 0 0 4px #e6b96f55; text-align: center; }
+  .card p.note { font-size: 1.08rem; line-height: 1.55; max-width: 44ch; margin: 0 auto 6px; }
+  .card p.note b { font-family: "Fredoka", sans-serif; font-weight: 600; color: var(--caramel); }
+  .reaction { height: 76px; display: grid; place-items: center; font-size: 3.4rem; margin: 6px 0 0; perspective: 600px; }
+  .quip { min-height: 1.4em; font-weight: 700; color: var(--no-dark); margin-bottom: 10px; font-size: .98rem; }
+
+  .btns { display: flex; gap: 14px; justify-content: center; margin-top: 6px; }
+  .btn { flex: 1; max-width: 200px; border: 0; cursor: pointer; font-family: "Fredoka", sans-serif; font-weight: 600; font-size: 1.35rem; padding: 14px 10px; border-radius: 18px; color: #fff; transition: transform .12s ease, box-shadow .12s ease; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+  .btn.yes { background: linear-gradient(180deg, #3fe091, var(--yes)); box-shadow: 0 7px 0 var(--yes-dark), 0 14px 22px #0c7a4766; }
+  .btn.no  { background: linear-gradient(180deg, #ff9a7e, var(--no)); box-shadow: 0 7px 0 var(--no-dark), 0 14px 22px #b33a2066; }
+  .btn:active { transform: translateY(6px); }
+  .btn.yes:active { box-shadow: 0 1px 0 var(--yes-dark), 0 4px 8px #0c7a4766; }
+  .btn.no:active { box-shadow: 0 1px 0 var(--no-dark), 0 4px 8px #b33a2066; }
+  .btn:focus-visible, .decline:focus-visible, .snap:focus-visible, .cry-back:focus-visible { outline: 3px solid #12263a; outline-offset: 3px; }
+  .btn.morph { animation: morph .7s ease; }
+  @keyframes morph { 0% { transform: scale(1); } 40% { transform: scale(1.3) rotate(-8deg); } 100% { transform: scale(1) rotate(0); } }
+  .yes-pulse { animation: yesPulse 1.4s ease-in-out infinite; }
+  @keyframes yesPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+
+  .decline { display: none; margin: 16px auto 0; background: none; border: 0; color: #8a6c43; font: inherit; font-size: .82rem; text-decoration: underline; cursor: pointer; padding: 6px; }
+  .decline.show { display: block; animation: fadeIn .5s ease; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .done { display: none; }
+  .done.show { display: block; animation: fadeIn .5s ease; }
+  .snap { display: inline-block; margin-top: 14px; text-decoration: none; background: #fffc00; color: #111; font-family: "Fredoka", sans-serif; font-weight: 700; font-size: 1.2rem; padding: 14px 26px; border-radius: 18px; box-shadow: 0 7px 0 #b3a900, 0 14px 22px #00000040; transition: transform .12s ease; }
+  .snap:active { transform: translateY(6px); box-shadow: 0 1px 0 #b3a900; }
+
+  /* sugar fact sticker */
+  .fact-wrap { perspective: 600px; margin-top: 18px; }
+  .fact { position: relative; display: inline-block; overflow: hidden; max-width: 100%; padding: 12px 16px 13px; border-radius: 16px; text-align: center;
+    font-family: "Fredoka", sans-serif; font-weight: 500; font-size: .92rem; line-height: 1.35; color: #5a3500;
+    background: linear-gradient(135deg, #fff6b0, #ffd84d 60%, #ffc21a); border: 2.5px solid #b57d00;
+    box-shadow: 0 6px 0 #b57d00, 0 14px 20px rgba(0,0,0,.28), inset 0 2px 0 rgba(255,255,255,.8);
+    transform: rotateX(10deg) rotateZ(-1.5deg); animation: factFloat 3.4s ease-in-out infinite; }
+  .fact::after { content: ""; position: absolute; top: 0; bottom: 0; width: 40%; left: -60%; background: linear-gradient(100deg, transparent, rgba(255,255,255,.75), transparent); animation: factShine 3.2s ease-in-out infinite; }
+  @keyframes factFloat { 0%,100% { transform: rotateX(10deg) rotateZ(-1.5deg) translateY(0); } 50% { transform: rotateX(-6deg) rotateZ(1.5deg) translateY(-5px); } }
+  @keyframes factShine { 0%, 55% { left: -60%; } 100% { left: 130%; } }
+  .fact b { font-weight: 700; }
+  .fact mark { background: linear-gradient(transparent 52%, #ff7a45 52%, #ff7a45 92%, transparent 92%); color: #3b1f00; font-weight: 700; padding: 0 3px; border-radius: 3px; }
+  .fact .e3d { font-size: 1.25rem; vertical-align: -3px; animation: tumble 2.6s ease-in-out infinite; }
+  .fact .tiny { display: block; margin-top: 3px; font-size: .74rem; font-weight: 400; color: #7a5200; }
+
+  /* runaway No button puff */
+  .poof { position: fixed; z-index: 35; pointer-events: none; font-size: 2rem; animation: poof .7s ease-out forwards; }
+  @keyframes poof { from { transform: scale(.4) translateY(0); opacity: 1; } to { transform: scale(1.7) translateY(-34px) rotate(20deg); opacity: 0; } }
+
+  /* ================= CRY PAGE ================= */
+  .cry {
+    position: fixed; inset: 0; z-index: 40; display: none; align-items: center; justify-content: center; text-align: center; padding: 24px;
+    background: radial-gradient(800px 500px at 50% 20%, #3b78a8, transparent 70%), linear-gradient(180deg, #0b1a2b, #17456b);
+    overflow: hidden;
+  }
+  .cry.show { display: flex; animation: cryIn .35s ease; }
+  @keyframes cryIn { from { opacity: 0; transform: scale(1.06); } to { opacity: 1; transform: scale(1); } }
+  .cry-body { position: relative; z-index: 3; max-width: 440px; margin-bottom: 70px; perspective: 700px; }
+  .cry-faces { display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .cry-faces .big { font-size: clamp(5.5rem, 28vw, 8rem); animation: cryBig .5s ease-in-out infinite alternate; }
+  .cry-faces .side { font-size: 3.2rem; }
+  @keyframes cryBig { from { transform: rotateY(-22deg) rotateZ(-5deg) scale(1); } to { transform: rotateY(22deg) rotateZ(5deg) scale(1.08); } }
+  .cry h2 { font-family: "Fredoka", sans-serif; font-weight: 700; font-size: clamp(1.8rem, 8vw, 2.5rem); color: #fff8ea; text-shadow: 0 3px 0 #00000055, 0 10px 24px #00000066; margin-top: 8px; }
+  .cry p { color: #d8ecff; font-size: 1.08rem; line-height: 1.5; margin: 8px auto 0; max-width: 34ch; }
+  .cry-count { margin-top: 16px; color: #ffe9a8; font-family: "Fredoka", sans-serif; font-weight: 600; font-size: 1.05rem; }
+  .cry-count b { display: inline-block; min-width: 1.2em; font-size: 1.5rem; color: #fff; }
+  .cry-back { margin-top: 14px; border: 0; cursor: pointer; font-family: "Fredoka", sans-serif; font-weight: 600; font-size: 1.1rem; color: #3a2400; padding: 12px 22px; border-radius: 16px; background: linear-gradient(180deg, #fff3b0, #ffd23f); box-shadow: 0 6px 0 #b57d00, 0 12px 20px #00000050; }
+  .cry-back:active { transform: translateY(5px); box-shadow: 0 1px 0 #b57d00; }
+  .puddle { position: absolute; left: 0; right: 0; bottom: 0; height: 0; z-index: 2; background: linear-gradient(180deg, #f3dca6, #d9a95a); animation: puddleUp 3.8s ease-out forwards; }
+  .puddle::before { content: ""; position: absolute; left: -10%; right: -10%; top: -16px; height: 32px; background: radial-gradient(18px 14px at 18px 16px, #f3dca6 98%, transparent) 0 0 / 36px 32px repeat-x; animation: waveMove 2.2s linear infinite; }
+  @keyframes puddleUp { to { height: 22%; } }
+  @keyframes waveMove { to { background-position: 36px 0; } }
+  .drip { position: absolute; top: -20px; z-index: 1; width: 10px; height: 18px; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; background: linear-gradient(180deg, #bfe5ff, #5ab8ff); opacity: .9; animation: drip linear infinite; }
+  @keyframes drip { to { transform: translateY(110vh); } }
+
+  .fall { position: fixed; top: -60px; z-index: 60; pointer-events: none; font-size: 2.2rem; animation: fall linear forwards; }
+  @keyframes fall { from { transform: translateY(0) rotateY(0) rotateZ(0); opacity: 1; } to { transform: translateY(115vh) rotateY(720deg) rotateZ(40deg); opacity: .95; } }
+  .grain { position: fixed; top: 45%; left: 50%; z-index: 60; pointer-events: none; border-radius: 2px; animation: burst 1.6s cubic-bezier(.1,.7,.3,1) forwards; }
+  @keyframes burst { from { transform: translate(0,0) rotate(0); opacity: 1; } to { transform: translate(var(--dx), var(--dy)) rotate(var(--rot)); opacity: 0; } }
+  .shake { animation: shake .45s ease; }
+  @keyframes shake { 0%,100% { transform: translateX(0); } 20% { transform: translateX(-9px) rotate(-1deg); } 40% { transform: translateX(9px) rotate(1deg); } 60% { transform: translateX(-6px); } 80% { transform: translateX(6px); } }
+
+  /* ================= RESPONSIVE: everything fits in one view ================= */
+  html { height: 100%; }
+  body {
+    min-height: 100vh; min-height: 100dvh;
+    padding: max(clamp(8px, 2dvh, 20px), env(safe-area-inset-top)) clamp(10px, 3vw, 22px) max(clamp(8px, 2dvh, 20px), env(safe-area-inset-bottom));
+  }
+  main { display: flex; flex-direction: column; justify-content: center; gap: clamp(6px, 1.5dvh, 14px); }
+  .head { text-align: center; }
+  h1 { font-size: clamp(1.3rem, min(7vw, 4.6dvh), 2.5rem); margin: 0; }
+  .sub { font-size: clamp(.8rem, 1.9dvh, 1rem); margin: 3px 0 0; }
+
+  /* the 3D scene is scaled by JS (--k) so it always fits the space that is left */
+  .stage { flex: 1 1 0; height: auto; min-height: 150px; max-height: 430px; margin-top: 0; padding-top: 58px; overflow: hidden; align-items: flex-end; justify-content: center; }
+  .stage-inner { display: flex; align-items: flex-end; justify-content: center; flex: none; width: 360px; height: 255px; transform: scale(var(--k, 1)); transform-origin: 50% 100%; }
+  .bubble { top: 2px; max-width: min(250px, 90%); font-size: clamp(.78rem, 1.9dvh, .95rem); padding: 7px 11px; }
+
+  .card { margin-top: 0; padding: clamp(12px, 2.4dvh, 22px) clamp(12px, 4vw, 20px); border-radius: clamp(18px, 3dvh, 26px); }
+  .card p.note { font-size: clamp(.86rem, min(2.3dvh, 3.9vw), 1.12rem); line-height: 1.45; margin-bottom: 2px; }
+  .reaction { height: clamp(38px, 7.2dvh, 72px); font-size: clamp(2rem, 5.6dvh, 3.3rem); margin: 2px 0 0; }
+  .done .reaction span { font-size: inherit !important; }
+  .quip { min-height: 1.3em; margin-bottom: clamp(4px, 1.2dvh, 10px); font-size: clamp(.8rem, 1.9dvh, .98rem); }
+  .btn { font-size: clamp(1.05rem, 2.8dvh, 1.35rem); padding: clamp(8px, 1.9dvh, 14px) 10px; }
+  .decline { margin-top: clamp(6px, 1.4dvh, 16px); padding: 4px; font-size: clamp(.72rem, 1.7dvh, .82rem); }
+  .fact-wrap { margin-top: clamp(8px, 1.8dvh, 18px); }
+  .fact { padding: clamp(7px, 1.4dvh, 12px) 14px; font-size: clamp(.78rem, 1.9dvh, .92rem); }
+  .snap { margin-top: clamp(8px, 1.6dvh, 14px); }
+
+  .cry-body { margin-bottom: clamp(30px, 10dvh, 70px); }
+  .cry-faces .big { font-size: clamp(4rem, min(26vw, 20dvh), 8rem); }
+  .cry-faces .side { font-size: clamp(2rem, min(12vw, 8dvh), 3.2rem); }
+  .cry h2 { font-size: clamp(1.4rem, min(8vw, 5dvh), 2.5rem); }
+  .cry p { font-size: clamp(.9rem, 2.3dvh, 1.08rem); }
+
+  /* short screens: drop the least important lines so everything still fits */
+  @media (max-height: 720px) and (max-aspect-ratio: 6/5), (max-height: 520px) {
+    .fact .tiny, .sub { display: none; }
+  }
+
+  /* laptops, desktops, tablets and phones held sideways: two columns, scene on the left, question on the right */
+  @media (min-width: 560px) and (min-aspect-ratio: 6/5) {
+    main {
+      display: grid; max-width: 1120px;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      grid-template-rows: auto minmax(0, 1fr);
+      grid-template-areas: "head card" "stage card";
+      column-gap: clamp(16px, 4vw, 48px); row-gap: clamp(4px, 1.4dvh, 12px); align-content: center;
+    }
+    .head { grid-area: head; align-self: end; }
+    .stage { grid-area: stage; align-self: stretch; align-items: center; max-height: 460px; }
+    .card { grid-area: card; align-self: center; }
+  }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; } .sparkle { display: none; } }
+</style>
+</head>
+<body>
+
+<main>
+  <header class="head">
+    <h1>Asslamoelkum Madam E A <span class="e3d tumble">😎</span></h1>
+    <p class="sub">A very sweet, very official request is waiting for you.</p>
+  </header>
+
+  <section class="stage" id="stage" aria-label="A cute 3D sugar cube with orbiting sugar crystals next to a sack of raw sugar">
+    <div class="bubble" id="bubble">Madam, I am 99% sugar and 1% nervous.</div>
+
+    <div class="stage-inner" id="stageInner">
+    <div class="tilt" id="tilt">
+      <div class="tilt-inner" id="tiltInner">
+        <div class="glow"></div>
+        <div class="ground"></div>
+
+        <!-- orbiting sugar crystals -->
+        <div class="orbit">
+          <div class="orb" style="--a:0deg"><i></i></div>
+          <div class="orb sm" style="--a:90deg"><i></i></div>
+          <div class="orb" style="--a:180deg"><i></i></div>
+          <div class="orb sm" style="--a:270deg"><i></i></div>
+        </div>
+
+        <!-- the real 3D sugar cube -->
+        <div class="char" id="char">
+          <div class="foot l"></div><div class="foot r"></div>
+          <div class="cube">
+            <div class="face f-back"></div>
+            <div class="face f-left"></div>
+            <div class="face f-right"></div>
+            <div class="face f-bottom"></div>
+            <div class="face f-top"></div>
+            <div class="face f-front">
+              <svg viewBox="0 0 150 150" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Cute sugar cube face">
+                <path d="M22 26 l3 -9 3 9 9 3 -9 3 -3 9 -3 -9 -9 -3z" fill="#fff" opacity=".95"/>
+                <ellipse cx="29" cy="97" rx="13" ry="8" fill="#ff9d7a" opacity=".6"/>
+                <ellipse cx="121" cy="97" rx="13" ry="8" fill="#ff9d7a" opacity=".6"/>
+                <g class="eye">
+                  <circle cx="48" cy="68" r="18" fill="#fff" stroke="#5a3a12" stroke-width="3.5"/>
+                  <g class="pupil" id="pupilL"><circle cx="48" cy="69" r="10" fill="#2a1c0d"/><circle cx="44" cy="64" r="3.4" fill="#fff"/></g>
+                </g>
+                <g class="eye">
+                  <circle cx="102" cy="68" r="18" fill="#fff" stroke="#5a3a12" stroke-width="3.5"/>
+                  <g class="pupil" id="pupilR"><circle cx="102" cy="69" r="10" fill="#2a1c0d"/><circle cx="98" cy="64" r="3.4" fill="#fff"/></g>
+                </g>
+                <g class="brows-neutral" stroke="#5a3a12" stroke-width="4" stroke-linecap="round" fill="none">
+                  <path d="M33 40 Q48 33 63 40"/><path d="M87 40 Q102 33 117 40"/>
+                </g>
+                <g class="sad-only" stroke="#5a3a12" stroke-width="4.5" stroke-linecap="round" fill="none">
+                  <path d="M32 48 L64 36"/><path d="M118 48 L86 36"/>
+                </g>
+                <path class="mouth-neutral" d="M62 112 Q75 126 88 112" stroke="#5a3a12" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+                <path class="sad-only" d="M54 130 Q75 100 96 130 Q75 114 54 130z" fill="#7a2a1a" stroke="#5a3a12" stroke-width="3.5" stroke-linejoin="round"/>
+                <path class="happy-only" d="M52 104 Q75 150 98 104 Z" fill="#7a2a1a" stroke="#5a3a12" stroke-width="3.5" stroke-linejoin="round"/>
+                <path class="happy-only" d="M63 128 Q75 118 87 128 Q75 138 63 128z" fill="#ff7b72"/>
+                <path class="tear" d="M40 90 q-8 14 0 20 q8 -6 0 -20z" fill="#5ab8ff" stroke="#2a7fc4" stroke-width="2"/>
+                <path class="tear t2" d="M110 90 q-8 14 0 20 q8 -6 0 -20z" fill="#5ab8ff" stroke="#2a7fc4" stroke-width="2"/>
+                <g class="happy-only">
+                  <rect x="20" y="52" width="52" height="34" rx="13" fill="#14110d" stroke="#000" stroke-width="2"/>
+                  <rect x="78" y="52" width="52" height="34" rx="13" fill="#14110d" stroke="#000" stroke-width="2"/>
+                  <rect x="68" y="61" width="14" height="5" fill="#14110d"/>
+                  <path d="M28 59 l13 -2" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".7"/>
+                  <path d="M86 59 l13 -2" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".7"/>
+                </g>
+              </svg>
+            </div>
+          </div>
+          <div class="hand l"></div><div class="hand r"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Raw sugar sack -->
+    <svg class="sack" id="sack" viewBox="0 0 140 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A sack of raw sugar">
+      <path d="M30 44 Q70 22 110 44 L124 66 Q142 120 126 172 Q70 192 14 172 Q-2 120 16 66 Z" fill="#d9a566" stroke="#8a5a22" stroke-width="3.5" stroke-linejoin="round"/>
+      <path d="M30 44 Q70 22 110 44 L118 58 Q70 42 22 58 Z" fill="#c78d4c" stroke="#8a5a22" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M56 36 Q70 12 84 36" fill="none" stroke="#8a5a22" stroke-width="5" stroke-linecap="round"/>
+      <rect x="58" y="32" width="24" height="9" rx="4" fill="#c0392b" stroke="#7a1f14" stroke-width="2.5"/>
+      <path d="M46 84 q8 7 16 0" stroke="#4a2c0c" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+      <path d="M78 84 q8 7 16 0" stroke="#4a2c0c" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+      <ellipse cx="44" cy="97" rx="7" ry="4.5" fill="#ff8a65" opacity=".6"/><ellipse cx="96" cy="97" rx="7" ry="4.5" fill="#ff8a65" opacity=".6"/>
+      <path d="M62 96 Q70 106 78 96" stroke="#4a2c0c" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+      <rect x="28" y="112" width="84" height="48" rx="9" fill="#fff8ea" stroke="#8a5a22" stroke-width="3"/>
+      <text x="70" y="133" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="700" font-size="17" fill="#8a3b12">RAW SUGAR</text>
+      <text x="70" y="150" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="500" font-size="9" fill="#6b4a1f">Madam E A's emergency stock</text>
+      <g id="pile"></g>
+      <g transform="rotate(24 112 170)"><rect x="110" y="140" width="5" height="34" rx="2.5" fill="#cfd6dd" stroke="#7d8791" stroke-width="1.5"/><ellipse cx="112.5" cy="138" rx="8" ry="6" fill="#e6ebef" stroke="#7d8791" stroke-width="1.5"/></g>
+    </svg>
+    </div>
+  </section>
+
+  <section class="card" id="card">
+    <div id="ask">
+      <p class="note">
+        Madam E A, since you love sugar this much, I will keep it short and sweet:
+        <b>may I please add you on Snapchat?</b>
+        I promise no spam, only good vibes and the occasional sugar meme.
+      </p>
+      <div class="reaction" id="reaction" aria-live="polite"><span class="e3d tumble" id="reactEmoji">🥺</span></div>
+      <div class="quip" id="quip"></div>
+
+      <div class="btns" id="btns">
+        <button class="btn yes" id="btnYes" data-role="yes">Yes</button>
+        <button class="btn no" id="btnNo" data-role="no">No</button>
+      </div>
+      <button class="decline" id="decline" type="button">Not for me, no worries. Tap here to close this politely.</button>
+
+      <div class="fact-wrap">
+        <div class="fact">
+          <span class="e3d">🍬</span>
+          <b>Sugar fact:</b> this page contains <mark>zero calories</mark> and <mark>100% sweetness</mark>
+          <span class="e3d" style="animation-delay:-1.3s">🦷</span>
+          <span class="tiny">Your dentist was not consulted. Your sweet tooth was.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="done" id="doneYes">
+      <div class="reaction"><span class="e3d tumble" style="font-size:3.6rem">🤩</span></div>
+      <p class="note"><b>You said yes!</b> Today just got sweeter than a spoon of raw sugar. Tap below and I will be waiting there.</p>
+      <a class="snap" id="snapLink" href="#" target="_blank" rel="noopener">Add me on Snapchat</a>
+    </div>
+
+    <div class="done" id="doneNo">
+      <div class="reaction"><span class="e3d tumble" style="font-size:3.6rem">🙂</span></div>
+      <p class="note"><b>Totally understood.</b> Thank you for being honest, and thank you for reading. Wishing you a very sweet day, Madam E A.</p>
+    </div>
+  </section>
+</main>
+
+<!-- ============ CRY PAGE (shown when she taps No) ============ -->
+<div class="cry" id="cry" role="dialog" aria-live="assertive" aria-label="The sugar is crying">
+  <div id="dripLayer"></div>
+  <div class="cry-body">
+    <div class="cry-faces">
+      <span class="e3d tumble side">🥹</span>
+      <span class="e3d big">😭</span>
+      <span class="e3d tumble side" style="animation-delay:-1s">😂</span>
+    </div>
+    <h2 id="cryTitle">WAAAAH!</h2>
+    <p id="cryText">Madam, you made the sugar cry.</p>
+    <div class="cry-count">Back to the question in <b id="cryCount">4</b></div>
+    <button class="cry-back" id="cryBack" type="button">Okay okay, ask me again</button>
+  </div>
+  <div class="puddle"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script>
+(() => {
+  "use strict";
+
+  /* ==================== CONFIG ==================== */
+  const SNAPCHAT_USERNAME = "YOUR_SNAPCHAT_USERNAME";   // <-- put YOUR Snapchat username here (no @)
+
+  const SUPABASE_URL = "https://qxhfafifugbxglruinec.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_T5eFBJkt6u4cXhDFCgi_QQ_Rpm_Z8Cr";
+  const EVENTS_TABLE  = "snap_request_events";
+  const ANSWERS_TABLE = "snap_request_answers";
+  const SCREEN_NAME   = "snap_request";
+
+  /* ==================== SUPABASE ==================== */
+  // Converts Headers/AbortSignal into plain data so sandboxed previews (postMessage fetch) don't throw DataCloneError.
+  function safeFetch(input, init) {
+    init = Object.assign({}, init || {});
+    if (typeof input !== "string") input = (input && input.url) ? input.url : String(input);
+    if (init.headers) {
+      const plain = {};
+      if (typeof init.headers.forEach === "function") init.headers.forEach((v, k) => { plain[k] = v; });
+      else if (Array.isArray(init.headers)) init.headers.forEach(([k, v]) => { plain[k] = v; });
+      else Object.assign(plain, init.headers);
+      init.headers = plain;
+    }
+    delete init.signal;
+    return fetch(input, init);
+  }
+
+  let db = null;
+  if (window.supabase) db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { global: { fetch: safeFetch } });
+  else console.error("Supabase library failed to load.");
+
+  let memorySessionId = null;
+  function getSessionId() {
+    try {
+      let id = localStorage.getItem("snap_session_id");
+      if (!id) { id = crypto.randomUUID(); localStorage.setItem("snap_session_id", id); }
+      return id;
+    } catch (e) {
+      if (!memorySessionId) memorySessionId = crypto.randomUUID();
+      return memorySessionId;
+    }
+  }
+  function getBrowser() {
+    const ua = navigator.userAgent;
+    if (ua.includes("Edg/")) return "Edge"; if (ua.includes("OPR/")) return "Opera";
+    if (ua.includes("Chrome/")) return "Chrome"; if (ua.includes("Firefox/")) return "Firefox";
+    if (ua.includes("Safari/")) return "Safari"; return "Other";
+  }
+  function getOS() {
+    const ua = navigator.userAgent;
+    if (ua.includes("Windows")) return "Windows"; if (/iPhone|iPad|iPod/.test(ua)) return "iOS";
+    if (ua.includes("Mac OS")) return "macOS"; if (ua.includes("Android")) return "Android";
+    if (ua.includes("Linux")) return "Linux"; return "Other";
+  }
+  function getDevice() {
+    const ua = navigator.userAgent;
+    if (/tablet|ipad/i.test(ua)) return "Tablet"; if (/mobile|iphone|android/i.test(ua)) return "Mobile"; return "Desktop";
+  }
+
+  async function logEvent(eventName, details = {}) {
+    if (!db) return;
+    try {
+      const { error } = await db.from(EVENTS_TABLE).insert({
+        session_id: getSessionId(), event_name: eventName, screen: SCREEN_NAME, details,
+        user_agent: navigator.userAgent, browser: getBrowser(), operating_system: getOS(), device_type: getDevice(),
+        page_url: window.location.href, referrer: document.referrer || null, occurred_at: new Date().toISOString()
+      });
+      if (error) console.error("Event insert failed:", error.message);
+    } catch (e) { console.error("Analytics error:", e); }
+  }
+  async function logAnswer(answer, extra = {}) {
+    if (!db) return;
+    try {
+      const { error } = await db.from(ANSWERS_TABLE).insert({
+        session_id: getSessionId(), answer, no_click_count: noCount, time_to_answer_ms: Date.now() - startedAt,
+        details: extra, user_agent: navigator.userAgent, browser: getBrowser(), operating_system: getOS(),
+        device_type: getDevice(), page_url: window.location.href, answered_at: new Date().toISOString()
+      });
+      if (error) console.error("Answer insert failed:", error.message);
+    } catch (e) { console.error("Answer error:", e); }
+  }
+
+  /* ==================== STATE ==================== */
+  const $ = (id) => document.getElementById(id);
+  const btnYes = $("btnYes"), btnNo = $("btnNo"), btns = $("btns");
+  const quip = $("quip"), reactEmoji = $("reactEmoji"), decline = $("decline");
+  const char = $("char"), bubble = $("bubble"), cry = $("cry");
+  let noCount = 0, answered = false, crying = false, sadTimer = null, cryTimer = null;
+  const startedAt = Date.now();
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  const rand = (a, b) => a + Math.random() * (b - a);
+  const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+  const idleLines = [
+    "Madam, I am 99% sugar and 1% nervous.",
+    "Psst... say Yes and I will stop sweating sugar.",
+    "I am raw, unrefined and ready to be your friend.",
+    "Warning: this cube melts if you say No.",
+    "No cavities were harmed in making this request."
+  ];
+  const cryScreens = [
+    ["WAAAAH!", "Madam, you made the sugar cry. It is now 50% sugar and 50% salt."],
+    ["The cube is melting!", "Please stop. The tears are turning the sugar into syrup."],
+    ["Sugar emergency!", "Doctors confirm this much crying causes a severe shortage of sweetness."]
+  ];
+  const cryEmojis = ["😭", "😭", "🥹", "😂", "🤣", "😢", "😹"];
+  const reactEmojis = ["🥺", "😭", "🥹"];
+
+  function setBubble(text) {
+    bubble.textContent = text;
+    bubble.classList.remove("swap"); void bubble.offsetWidth; bubble.classList.add("swap");
+  }
+  let idleIndex = 0;
+  setInterval(() => {
+    if (answered || crying || char.classList.contains("sad")) return;
+    idleIndex = (idleIndex + 1) % idleLines.length;
+    setBubble(idleLines[idleIndex]);
+  }, 4200);
+
+  /* ==================== BACKGROUND SPARKLES ==================== */
+  for (let i = 0; i < 26; i++) {
+    const s = document.createElement("i");
+    s.className = "sparkle";
+    s.style.left = rand(0, 100) + "vw"; s.style.top = rand(0, 100) + "vh";
+    s.style.animationDelay = rand(0, 3.2) + "s"; s.style.animationDuration = rand(2.4, 4.4) + "s";
+    document.body.appendChild(s);
+  }
+
+  /* ==================== SUGAR PILE ON THE SACK ==================== */
+  (function buildPile() {
+    const g = $("pile"), ns = "http://www.w3.org/2000/svg";
+    const cols = ["#fffaf0", "#f6e3bd", "#ecc98a", "#e0b068", "#cf9647", "#ffffff"];
+    const mound = document.createElementNS(ns, "path");
+    mound.setAttribute("d", "M18 186 Q40 150 70 152 Q104 150 126 186 Q70 196 18 186z");
+    mound.setAttribute("fill", "#ecc98a"); mound.setAttribute("stroke", "#a97a35"); mound.setAttribute("stroke-width", "2.5");
+    g.appendChild(mound);
+    for (let i = 0; i < 110; i++) {
+      const x = rand(26, 118), topY = 186 - 34 * Math.exp(-Math.pow(x - 72, 2) / 700), y = rand(topY + 2, 188);
+      const r = document.createElementNS(ns, "rect"), s = rand(2.2, 4.4);
+      r.setAttribute("x", x); r.setAttribute("y", y); r.setAttribute("width", s); r.setAttribute("height", s);
+      r.setAttribute("fill", pick(cols)); r.setAttribute("opacity", ".95");
+      r.setAttribute("transform", `rotate(${rand(0, 90)} ${x} ${y})`);
+      g.appendChild(r);
+    }
+  })();
+
+  /* ==================== EYES FOLLOW POINTER + 3D TILT ==================== */
+  const pupilL = $("pupilL"), pupilR = $("pupilR"), tiltInner = $("tiltInner");
+  function look(clientX, clientY) {
+    const box = char.getBoundingClientRect();
+    const cx = box.left + box.width / 2, cy = box.top + box.height * 0.45;
+    const dx = clientX - cx, dy = clientY - cy;
+    const dist = Math.hypot(dx, dy) || 1, k = Math.min(1, dist / 160) * 6;
+    pupilL.style.transform = pupilR.style.transform = `translate(${(dx / dist) * k}px, ${(dy / dist) * k}px)`;
+    if (!reduceMotion) {
+      const ry = Math.max(-1, Math.min(1, dx / 320)) * 14, rx = Math.max(-1, Math.min(1, dy / 320)) * -10;
+      tiltInner.style.transform = `rotateY(${ry}deg) rotateX(${rx}deg)`;
+    }
+  }
+  window.addEventListener("pointermove", (e) => look(e.clientX, e.clientY), { passive: true });
+
+  /* ==================== FIT THE 3D SCENE INTO WHATEVER SPACE IS LEFT ==================== */
+  const stageEl = $("stage"), stageInner = $("stageInner");
+  function fitStage() {
+    const cs = getComputedStyle(stageEl);
+    const availH = stageEl.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+    const availW = stageEl.clientWidth;
+    const k = Math.max(0.35, Math.min(availH / 255, availW / 360, 1.3));
+    stageInner.style.setProperty("--k", k.toFixed(3));
+  }
+  fitStage();
+  window.addEventListener("resize", fitStage);
+  window.addEventListener("orientationchange", () => setTimeout(fitStage, 250));
+  if (window.visualViewport) window.visualViewport.addEventListener("resize", fitStage);
+  if (window.ResizeObserver) new ResizeObserver(fitStage).observe(stageEl);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitStage);
+
+  /* ==================== EFFECTS ==================== */
+  function rain(list, count) {
+    if (reduceMotion) return;
+    for (let i = 0; i < count; i++) {
+      const el = document.createElement("span");
+      el.className = "fall e3d"; el.textContent = pick(list);
+      el.style.left = rand(0, 96) + "vw"; el.style.fontSize = rand(1.6, 3.2) + "rem";
+      el.style.animationDuration = rand(2.2, 4.2) + "s"; el.style.animationDelay = rand(0, 1.2) + "s";
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 6000);
+    }
+  }
+  function sugarBurst(count) {
+    if (reduceMotion) return;
+    const cols = ["#ffffff", "#fff3d6", "#f6d99b", "#e6b96f", "#cf9647", "#fffc00"];
+    for (let i = 0; i < count; i++) {
+      const g = document.createElement("i"); g.className = "grain";
+      const size = rand(6, 13);
+      g.style.width = g.style.height = size + "px"; g.style.background = pick(cols);
+      g.style.setProperty("--dx", rand(-170, 170) + "px"); g.style.setProperty("--dy", rand(-340, 280) + "px");
+      g.style.setProperty("--rot", rand(-720, 720) + "deg"); g.style.animationDelay = rand(0, 0.25) + "s";
+      document.body.appendChild(g);
+      setTimeout(() => g.remove(), 2200);
+    }
+  }
+  function swapButtons() {
+    const a = btnYes.getBoundingClientRect(), b = btnNo.getBoundingClientRect();
+    btns.insertBefore(btnNo, btnYes);
+    const a2 = btnYes.getBoundingClientRect(), b2 = btnNo.getBoundingClientRect();
+    if (reduceMotion) return;
+    [[btnYes, a, a2], [btnNo, b, b2]].forEach(([el, from, to]) => {
+      el.animate([{ transform: `translate(${from.left - to.left}px, ${from.top - to.top}px)` }, { transform: "translate(0,0)" }],
+        { duration: 560, easing: "cubic-bezier(.2,1.4,.4,1)" });
+    });
+  }
+  function showReaction(emoji) {
+    reactEmoji.textContent = emoji;
+    reactEmoji.classList.remove("pop"); void reactEmoji.offsetWidth; reactEmoji.classList.add("pop");
+  }
+
+  /* ==================== CRY PAGE ==================== */
+  function showCryPage() {
+    crying = true;
+    const [title, text] = cryScreens[(noCount - 1) % cryScreens.length];
+    $("cryTitle").textContent = title;
+    $("cryText").textContent = text;
+
+    // falling tear drops
+    const layer = $("dripLayer");
+    layer.innerHTML = "";
+    if (!reduceMotion) {
+      for (let i = 0; i < 26; i++) {
+        const d = document.createElement("i");
+        d.className = "drip";
+        d.style.left = rand(0, 98) + "vw";
+        d.style.animationDuration = rand(1.6, 3.4) + "s";
+        d.style.animationDelay = rand(0, 2.4) + "s";
+        layer.appendChild(d);
+      }
+    }
+    // restart puddle animation
+    const puddle = cry.querySelector(".puddle");
+    puddle.style.animation = "none"; void puddle.offsetWidth; puddle.style.animation = "";
+
+    cry.classList.add("show");
+    cry.setAttribute("aria-hidden", "false");
+    rain(cryEmojis, 28);
+    logEvent("cry_page_shown", { count: noCount });
+
+    let left = 4;
+    $("cryCount").textContent = left;
+    clearInterval(cryTimer);
+    cryTimer = setInterval(() => {
+      left--;
+      if (left <= 0) { hideCryPage("auto"); return; }
+      $("cryCount").textContent = left;
+    }, 1000);
+  }
+
+  function hideCryPage(how) {
+    if (!crying) return;
+    crying = false;
+    clearInterval(cryTimer);
+    cry.classList.remove("show");
+    cry.setAttribute("aria-hidden", "true");
+    logEvent("cry_page_closed", { how, count: noCount });
+    backToQuestion();
+  }
+
+  // After the cry page we return to the SAME question, and the No button is now secretly a Yes
+  function backToQuestion() {
+    window.scrollTo({ top: 0 });
+    if (btnNo.dataset.role === "no") {
+      btnNo.textContent = "Yes";
+      btnNo.dataset.role = "yes";
+      btnNo.classList.remove("no");
+      btnNo.classList.add("yes", "morph");
+      setTimeout(() => btnNo.classList.remove("morph"), 800);
+      swapButtons();
+      logEvent("button_swapped", { note: "No replaced by Yes" });
+    }
+    showReaction(pick(reactEmojis));
+    quip.textContent = "Oops, that No was secretly a Yes. Sugar magic!";
+    $("card").classList.remove("shake"); void $("card").offsetWidth; $("card").classList.add("shake");
+    btnYes.classList.add("yes-pulse"); btnNo.classList.add("yes-pulse");
+    decline.classList.add("show");
+
+    char.classList.remove("happy"); char.classList.add("sad");
+    setBubble("Sniff... so, may I ask again? 🥺");
+    clearTimeout(sadTimer);
+    sadTimer = setTimeout(() => { if (!answered) char.classList.remove("sad"); }, 2400);
+  }
+
+  /* ==================== HANDLERS ==================== */
+  function handleNo() {
+    if (crying || answered) return;
+    noCount++;
+    logEvent("no_clicked", { count: noCount });
+    showCryPage();
+  }
+
+  function handleYes() {
+    if (answered || crying) return;
+    answered = true;
+    logEvent("yes_clicked", { no_click_count: noCount });
+    logAnswer("yes", { via: noCount > 0 ? "after_cry_page" : "direct" });
+
+    $("ask").style.display = "none";
+    $("doneYes").classList.add("show");
+    $("snapLink").href = "https://www.snapchat.com/add/" + encodeURIComponent(SNAPCHAT_USERNAME);
+
+    clearTimeout(sadTimer);
+    char.classList.remove("sad"); char.classList.add("happy");
+    setBubble("YAYYY! Best decision ever, Madam! 😎");
+    sugarBurst(90);
+    rain(["🤩", "🥳", "😎", "🎉", "🍬", "✨"], 22);
+  }
+
+  function handleDecline() {
+    if (answered || crying) return;
+    answered = true;
+    logEvent("declined", { no_click_count: noCount });
+    logAnswer("declined", {});
+    clearTimeout(sadTimer);
+    char.classList.remove("sad", "happy");
+    setBubble("Okay, no problem. Stay sweet, Madam! 🙂");
+    $("ask").style.display = "none";
+    $("doneNo").classList.add("show");
+  }
+
+  /* ==================== RUNAWAY "NO" BUTTON ==================== */
+  // The No button dodges the pointer a few times (hover on desktop, tap on phones),
+  // then gets "tired", returns to its place, and works normally (-> cry page).
+  const MAX_DODGES = 6;
+  const dodgeLabels = ["Nope 😜", "Too slow!", "Missed me!", "Wheee!", "Catch me!", "Phew 😅"];
+  const dodgeLines = [
+    "Hehe, the No button is scared of you!",
+    "It ran away! It grew legs!",
+    "Too slow, Madam! 😜",
+    "That button had too much sugar!",
+    "Even I cannot catch it!",
+    "Okay okay, it is tired. Go ahead, press it 😅"
+  ];
+  let dodges = 0, floating = false, restoring = false, placeholder = null;
+
+  function canDodge() {
+    return btnNo.dataset.role === "no" && !crying && !answered && !reduceMotion && !restoring && dodges < MAX_DODGES;
+  }
+
+  function startFloating() {
+    if (floating) return;
+    const r = btnNo.getBoundingClientRect();
+    placeholder = document.createElement("div");
+    placeholder.style.cssText = "flex:1;max-width:200px;visibility:hidden;height:" + r.height + "px";
+    btns.insertBefore(placeholder, btnNo);
+    Object.assign(btnNo.style, {
+      position: "fixed", left: r.left + "px", top: r.top + "px", width: r.width + "px", height: r.height + "px",
+      margin: "0", zIndex: "30",
+      transition: "left .4s cubic-bezier(.34,1.56,.64,1), top .4s cubic-bezier(.34,1.56,.64,1), transform .12s ease"
+    });
+    void btnNo.offsetWidth;
+    floating = true;
+  }
+
+  function pickSpot(px, py) {
+    const bw = btnNo.offsetWidth, bh = btnNo.offsetHeight, m = 10;
+    const vw = window.innerWidth, vh = window.innerHeight;
+    const y = btnYes.getBoundingClientRect(), pad = 16;
+    const cur = btnNo.getBoundingClientRect();
+    let best = null, bestScore = -1;
+    for (let i = 0; i < 50; i++) {
+      const x = rand(m, Math.max(m, vw - bw - m)), t = rand(m, Math.max(m, vh - bh - m));
+      const overlapsYes = x < y.right + pad && x + bw > y.left - pad && t < y.bottom + pad && t + bh > y.top - pad;
+      if (overlapsYes) continue;
+      const fromCur = Math.hypot(x - cur.left, t - cur.top);
+      if (fromCur < 140) continue;
+      const fromPointer = Math.hypot(x + bw / 2 - px, t + bh / 2 - py);
+      const score = fromPointer + fromCur * 0.5;
+      if (score > bestScore) { bestScore = score; best = { x, t }; }
+    }
+    if (!best) best = { x: px < vw / 2 ? vw - bw - m : m, t: py < vh / 2 ? vh - bh - m : m };
+    return best;
+  }
+
+  function poofAt(rect) {
+    const p = document.createElement("span");
+    p.className = "poof e3d";
+    p.textContent = pick(["💨", "💨", "😜", "🤪"]);
+    p.style.left = (rect.left + rect.width / 2 - 16) + "px";
+    p.style.top = (rect.top + rect.height / 2 - 16) + "px";
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), 800);
+  }
+
+  function dodge(px, py) {
+    dodges++;
+    startFloating();
+    poofAt(btnNo.getBoundingClientRect());
+    const spot = pickSpot(px, py);
+    btnNo.style.left = spot.x + "px";
+    btnNo.style.top = spot.t + "px";
+    btnNo.textContent = dodgeLabels[(dodges - 1) % dodgeLabels.length];
+    btnNo.animate(
+      [{ transform: "rotate(0) scale(1)" }, { transform: "rotate(-16deg) scale(1.15)" }, { transform: "rotate(10deg) scale(.95)" }, { transform: "rotate(0) scale(1)" }],
+      { duration: 420, easing: "ease-out" }
+    );
+    setBubble(dodgeLines[(dodges - 1) % dodgeLines.length]);
+    logEvent("no_dodged", { count: dodges });
+    if (dodges >= 3) decline.classList.add("show");   // she is never trapped
+    if (dodges >= MAX_DODGES) setTimeout(restoreNo, 1100);
+  }
+
+  function restoreNo() {
+    if (!floating || answered || crying) return;
+    restoring = true;
+    const r = placeholder.getBoundingClientRect();
+    btnNo.style.left = r.left + "px";
+    btnNo.style.top = r.top + "px";
+    setTimeout(() => {
+      btnNo.removeAttribute("style");
+      if (placeholder) placeholder.remove();
+      placeholder = null; floating = false; restoring = false;
+      btnNo.textContent = "No";
+    }, 520);
+  }
+
+  btnNo.addEventListener("pointerenter", (e) => {
+    if (e.pointerType !== "touch" && canDodge()) dodge(e.clientX, e.clientY);
+  });
+
+  function onButton(e) {
+    const role = e.currentTarget.dataset.role;
+    if (role === "no") {
+      if (restoring) return;
+      if (canDodge()) { dodge(e.clientX || window.innerWidth / 2, e.clientY || window.innerHeight / 2); return; }
+      handleNo();
+    } else {
+      handleYes();
+    }
+  }
+  btnYes.addEventListener("click", onButton);
+  btnNo.addEventListener("click", onButton);
+  decline.addEventListener("click", handleDecline);
+  $("cryBack").addEventListener("click", () => hideCryPage("button"));
+  $("snapLink").addEventListener("click", () => logEvent("snapchat_opened", { username: SNAPCHAT_USERNAME }));
+
+  logEvent("page_view");
+})();
+</script>
+</body>
+</html>
